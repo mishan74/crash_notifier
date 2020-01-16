@@ -75,8 +75,7 @@ public class BitcoreNodeChecker {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             assert response != null;
             response.close();
         }
