@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.IOException;
@@ -24,13 +25,13 @@ public class BitcoreNodeChecker {
     @Autowired
     private DucatusCondition condition;
     private Integer lastBlock;
+    @Value("${io.mywish.duc.blockchain.uri}")
     private String uri;
     private CloseableHttpClient client;
     @Autowired
     private EventPublisher publisher;
 
     public BitcoreNodeChecker() {
-        uri = "https://ducapi.rocknblock.io/api/DUC/mainnet/block?limit=1";
         client = HttpClientBuilder.create()
                 .setMaxConnTotal(100)
                 .build();
