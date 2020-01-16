@@ -50,8 +50,7 @@ public class CrashBot extends TelegramLongPollingBot {
         try {
             telegramBotsApi.registerBot(this);
             log.info("Bot was registered, token: {}.", botToken);
-        }
-        catch (TelegramApiRequestException e) {
+        } catch (TelegramApiRequestException e) {
             log.error("Failed during the bot registration.", e);
         }
     }
@@ -62,14 +61,11 @@ public class CrashBot extends TelegramLongPollingBot {
 
         if (update.hasChannelPost()) {
             chatId = update.getChannelPost().getChatId();
-        }
-        else if (update.hasEditedChannelPost()) {
+        } else if (update.hasEditedChannelPost()) {
             chatId = update.getEditedChannelPost().getChatId();
-        }
-        else if (update.hasEditedMessage()) {
+        } else if (update.hasEditedMessage()) {
             chatId = update.getEditedMessage().getChatId();
-        }
-        else if (update.hasMessage() && update.getMessage().hasText()) {
+        } else if (update.hasMessage() && update.getMessage().hasText()) {
             chatId = update.getMessage().getChatId();
             String userName = update.getMessage().getFrom() != null
                     ? update.getMessage().getFrom().getUserName()
@@ -85,13 +81,11 @@ public class CrashBot extends TelegramLongPollingBot {
                     .findFirst();
             if (botCommand.isPresent()) {
                 botCommand.get().execute(chatContext, args);
-            }
-            else {
+            } else {
                 log.warn("Unknown command {} from user {} in chat {}", cmdName, userName, chatId);
                 chatContext.sendMessage("Unknown command '" + cmdName + "'");
             }
-        }
-        else {
+        } else {
             return;
         }
         if (chatFilePersister.tryAdd(chatId, botUsername)) {
@@ -104,6 +98,9 @@ public class CrashBot extends TelegramLongPollingBot {
         sendToAll(message);
     }
 
+    public void onDucatusNotConnect(String message) {
+        sendToAll(message);
+    }
 
     public void sendToAll(String message) {
         SendMessage sendMessage = new SendMessage()
@@ -148,8 +145,7 @@ public class CrashBot extends TelegramLongPollingBot {
                         .setChatId(chatId)
                         .setText("Not information available.")
                 );
-            }
-            catch (TelegramApiException e) {
+            } catch (TelegramApiException e) {
                 log.error("Sending stub message to chat '{}' was failed.", chatId, e);
             }
             return;
@@ -158,8 +154,7 @@ public class CrashBot extends TelegramLongPollingBot {
 
         try {
             execute(message.setChatId(chatId));
-        }
-        catch (TelegramApiException e) {
+        } catch (TelegramApiException e) {
             log.error("Sending message '{}' to chat '{}' was failed.", message, chatId, e);
         }
     }

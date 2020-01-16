@@ -1,6 +1,6 @@
 package io.mywish.duc.blockchain;
 
-import io.mywish.duc.blockchain.service.BitcoreNodeReader;
+import io.mywish.duc.blockchain.service.BitcoreNodeChecker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:bitcore.properties")
 public class BitcoreModule {
     @Bean
-    BitcoreNodeReader bitcoreReader() {
-        return new BitcoreNodeReader();
+    BitcoreNodeChecker bitcoreNodeChecker() {
+        return new BitcoreNodeChecker();
     }
 }
