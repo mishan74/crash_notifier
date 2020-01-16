@@ -67,7 +67,6 @@ public class BitcoreNodeChecker {
         try {
             response = client.execute(HttpHost.create(uri), new HttpGet(suffix));
             if (response != null) {
-                System.out.println(response.getEntity().toString());
                 int code = response.getStatusLine().getStatusCode();
                 if (code != 200 && code > 0) {
                     log.warn("Status code is {}", code);
