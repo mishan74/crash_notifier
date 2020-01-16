@@ -3,8 +3,6 @@ package io.mywish.bot.commands;
 import io.mywish.bot.service.BotCommand;
 import io.mywish.bot.service.ChatContext;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

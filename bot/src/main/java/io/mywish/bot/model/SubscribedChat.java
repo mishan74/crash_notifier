@@ -12,10 +12,10 @@ public class SubscribedChat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "chat_id", unique = false, nullable = false)
+    @Column(name = "chat_id", nullable = false)
     private Long chatId;
 
-    @Column(name = "bot", unique = false, nullable = false)
+    @Column(name = "bot", nullable = false)
     private String botName;
 
 
