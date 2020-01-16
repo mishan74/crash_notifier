@@ -63,19 +63,22 @@ public class BitcoreNodeChecker {
         CloseableHttpResponse response = null;
         try {
             response = client.execute(HttpHost.create(uri), new HttpGet());
+            if (response != null) {
+                int code = response.getStatusLine().getStatusCode();
+                if (code != 200 && code > 0) {
+                    log.warn("Status code is {}", code);
+                    publisher.publish(
+                            new ConnectionCrushEvent(
+                                    String.format("Can't connect to ducapi.rocknblock.io. Code status %d", code)
+                            ));
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        if (response != null) {
-            int code = response.getStatusLine().getStatusCode();
-            if (code != 200 && code > 0) {
-                log.warn("Status code is {}", code);
-                publisher.publish(
-                        new ConnectionCrushEvent(
-                                String.format("Can't connect to ducapi.rocknblock.io. Code status %d", code)
-                        ));
-            }
+        finally {
+            assert response != null;
+            response.close();
         }
     }
 }
