@@ -96,4 +96,8 @@ public class CrashBotDev extends TelegramLongPollingBot {
     public void onDucatusStuck(String message) {
         sendToAll(message);
     }
+
+    public void onDucatusNotConnect(String message) {
+        sendToAll(message);
+    }
 }
