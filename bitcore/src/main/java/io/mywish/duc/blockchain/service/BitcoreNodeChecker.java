@@ -27,7 +27,9 @@ public class BitcoreNodeChecker {
     private Integer lastBlock;
     @Value("${io.mywish.duc.blockchain.uri}")
     private String uri;
-    private CloseableHttpClient client;
+    @Value("${io.mywish.duc.blockchain.uri.suffix}")
+    private String suffix;
+    private final CloseableHttpClient client;
     @Autowired
     private EventPublisher publisher;
 
@@ -48,7 +50,7 @@ public class BitcoreNodeChecker {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             log.info("try to connect ducatus bitcore");
-            DucBlock[] ducBlocks = objectMapper.readValue(new URL(uri), DucBlock[].class);
+            DucBlock[] ducBlocks = objectMapper.readValue(new URL(uri.concat(suffix)), DucBlock[].class);
             lastBlock = ducBlocks[0].getHeight();
         } catch (IOException e) {
             log.warn("can't to connect to ducatus bitcore with Exception message: {}", e.getMessage());
@@ -63,14 +65,15 @@ public class BitcoreNodeChecker {
     private void doConnect() {
         CloseableHttpResponse response = null;
         try {
-            response = client.execute(HttpHost.create(uri), new HttpGet());
+            response = client.execute(HttpHost.create(uri), new HttpGet(suffix));
             if (response != null) {
+                System.out.println(response.getEntity().toString());
                 int code = response.getStatusLine().getStatusCode();
                 if (code != 200 && code > 0) {
                     log.warn("Status code is {}", code);
                     publisher.publish(
                             new ConnectionCrushEvent(
-                                    String.format("Can't connect to ducapi.rocknblock.io. Code status %d", code)
+                                    String.format("Can't connect to %s%s. Code status %d", uri, suffix, code)
                             ));
                 }
             }
