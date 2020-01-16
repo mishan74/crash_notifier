@@ -1,5 +1,6 @@
 package io.mywish.bot.service;
 
+import io.mywish.event.model.ConnectionCrushEvent;
 import io.mywish.event.model.DucatusStuckEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,5 +20,13 @@ public class BotIntegration {
         String message = event.getMessage();
         bot.onDucatusStuck(message);
         botDev.onDucatusStuck(message);
+    }
+
+    @EventListener
+    public void onDucatusNotConnection(final ConnectionCrushEvent event) {
+        log.info("find Connection Ducatus crush event. Send message");
+        String message = event.getMessage();
+        bot.onDucatusNotConnect(message);
+        botDev.onDucatusNotConnect(message);
     }
 }
