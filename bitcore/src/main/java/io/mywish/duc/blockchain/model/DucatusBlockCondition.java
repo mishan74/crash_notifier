@@ -25,6 +25,7 @@ public class DucatusBlockCondition {
     public DucatusBlockCondition(@Value("${io.mywish.duc.blockchain.attention.time}") long attentionTime, EventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
         this.attentionTime = startAttentionTime = attentionTime;
+        this.lastTimestamp = new Date().getTime();
     }
 
     public int getLastBlock() {
