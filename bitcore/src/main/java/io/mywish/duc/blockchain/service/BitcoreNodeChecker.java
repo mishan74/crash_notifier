@@ -2,9 +2,8 @@ package io.mywish.duc.blockchain.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mywish.duc.blockchain.model.DucBlock;
-import io.mywish.duc.blockchain.model.DucatusCondition;
-import io.mywish.event.model.ConnectionCrushEvent;
-import io.mywish.event.service.EventPublisher;
+import io.mywish.duc.blockchain.model.DucatusBlockCondition;
+import io.mywish.duc.blockchain.model.DucatusStatusCondition;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
@@ -23,15 +22,15 @@ import java.util.Arrays;
 @Slf4j
 public class BitcoreNodeChecker {
     @Autowired
-    private DucatusCondition condition;
+    private DucatusBlockCondition blockCondition;
+    @Autowired
+    private DucatusStatusCondition satusCondition;
     private Integer lastBlock;
     @Value("${io.mywish.duc.blockchain.uri}")
     private String uri;
     @Value("${io.mywish.duc.blockchain.uri.suffix}")
     private String suffix;
     private final CloseableHttpClient client;
-    @Autowired
-    private EventPublisher publisher;
 
     public BitcoreNodeChecker() {
         client = HttpClientBuilder.create()
@@ -57,7 +56,7 @@ public class BitcoreNodeChecker {
             log.warn("Exception stack trace: {}", Arrays.toString(e.getStackTrace()));
             e.printStackTrace();
         } finally {
-            condition.setConditions(lastBlock == null ? condition.getLastBlock() : lastBlock);
+            blockCondition.setConditions(lastBlock == null ? blockCondition.getLastBlock() : lastBlock);
         }
     }
 
@@ -68,13 +67,7 @@ public class BitcoreNodeChecker {
             response = client.execute(HttpHost.create(uri), new HttpGet(suffix));
             if (response != null) {
                 int code = response.getStatusLine().getStatusCode();
-                if (code != 200 && code > 0) {
-                    log.warn("Status code is {}", code);
-                    publisher.publish(
-                            new ConnectionCrushEvent(
-                                    String.format("Can't connect to %s%s. Code status %d", uri, suffix, code)
-                            ));
-                }
+                satusCondition.setCondition(code, uri.concat(suffix));
             }
         } catch (IOException e) {
             e.printStackTrace();

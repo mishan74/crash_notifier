@@ -13,7 +13,7 @@ import java.util.Date;
 @Component
 @Getter
 @Slf4j
-public class DucatusCondition {
+public class DucatusBlockCondition {
     private long startAttentionTime;
     private long attentionTime;
     private int lastBlock;
@@ -22,9 +22,10 @@ public class DucatusCondition {
     @Autowired
     private final EventPublisher eventPublisher;
 
-    public DucatusCondition(@Value("${io.mywish.duc.blockchain.attention.time}") long attentionTime, EventPublisher eventPublisher) {
+    public DucatusBlockCondition(@Value("${io.mywish.duc.blockchain.attention.time}") long attentionTime, EventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
         this.attentionTime = startAttentionTime = attentionTime;
+        this.lastTimestamp = new Date().getTime();
     }
 
     public int getLastBlock() {
