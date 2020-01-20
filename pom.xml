@@ -21,7 +21,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>bitcore</module>
+        <module>checker</module>
         <module>bot</module>
         <module>notify</module>
         <module>event</module>

@@ -17,7 +17,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bitcore</artifactId>
+            <artifactId>checker</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
