@@ -30,7 +30,10 @@ public class StatusChecker {
                 satusCondition.updateCondition(code);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            if (!e.getCause().getMessage().equals("В соединении отказано (Connection refused)")) {
+                e.printStackTrace();
+            }
+            satusCondition.updateCondition(-1);
         }
     }
 }

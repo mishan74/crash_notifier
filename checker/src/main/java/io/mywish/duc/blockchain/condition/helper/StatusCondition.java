@@ -10,10 +10,12 @@ import java.util.Date;
 
 @Slf4j
 public class StatusCondition {
+    private final long stopIncrementTime = 7200000;
     protected long startAttentionTime;
     protected long attentionTimer;
     protected long crusTimer;
     protected long lastTimestamp;
+
     @Getter
     protected int status;
     @Autowired
@@ -49,20 +51,35 @@ public class StatusCondition {
         } else if (status != 200) {
             crusTimer += (timestamp - lastTimestamp);
             lastTimestamp = timestamp;
-            checkTime();
+            checkTimeToNotify();
             log.info("Incorrect {} status {} almost {} seconds {}", network, status, Math.round(this.crusTimer / 1000), uri);
         }
     }
 
-    private void checkTime() {
+    private void checkTimeToNotify() {
         if (crusTimer > attentionTimer) {
+            upTimer();
             int stuckSeconds = Math.round(this.crusTimer / 1000);
             log.warn("Status 200 does not appear for {} seconds on {}", stuckSeconds, network);
-            attentionTimer *= 2;
-            eventPublisher.publish(
-                    new ConnectionCrushEvent(
-                            String.format("Can't connect to %s. Code status %d", uri, status)
-                    ));
+            eventPublisher.publish(new ConnectionCrushEvent(getNotifyMessage()));
         }
+    }
+
+    private void upTimer() {
+        if (attentionTimer < stopIncrementTime) {
+            attentionTimer *= 2;
+            if (attentionTimer > stopIncrementTime) {
+                attentionTimer = stopIncrementTime;
+            }
+        }
+    }
+
+    private String getNotifyMessage() {
+        StringBuilder message = new StringBuilder();
+        message.append(String.format("\"Can't connect to %s.", uri));
+        if (status != -1) {
+            message.append(String.format("Code status %d", status));
+        }
+        return message.toString();
     }
 }
