@@ -24,18 +24,13 @@ public class StatusChecker {
 
     @SneakyThrows
     public void doConnect() {
-        CloseableHttpResponse response = null;
-        try {
-            response = client.execute(HttpHost.create(uri), new HttpGet(suffix));
+        try (CloseableHttpResponse response = client.execute(HttpHost.create(uri), new HttpGet(suffix))) {
             if (response != null) {
                 int code = response.getStatusLine().getStatusCode();
                 satusCondition.updateCondition(code);
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            assert response != null;
-            response.close();
         }
     }
 }
