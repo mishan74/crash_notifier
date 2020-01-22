@@ -2,6 +2,7 @@ package io.mywish.duc.blockchain.condition.implementation;
 
 import io.mywish.duc.blockchain.condition.BlockConditional;
 import io.mywish.duc.blockchain.condition.helper.BlockCondition;
+import io.mywish.event.service.DucatusStuckEventCreator;
 import io.mywish.event.service.EventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,10 @@ public class DucatusBlockCondition implements BlockConditional {
 
     public DucatusBlockCondition(
             @Value("${io.mywish.duc.blockchain.attention.time}") long attentionTime,
-            @Autowired EventPublisher eventPublisher
+            @Autowired EventPublisher eventPublisher,
+            @Autowired DucatusStuckEventCreator eventCreator
     ) {
-        this.blockCondition = new BlockCondition(attentionTime, eventPublisher, "Ducatus");
+        this.blockCondition = new BlockCondition(attentionTime, eventPublisher, eventCreator, "Ducatus");
     }
 
     public void updateCondition(int lastBlock) {
