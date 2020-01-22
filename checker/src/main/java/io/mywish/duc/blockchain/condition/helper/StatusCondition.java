@@ -1,6 +1,6 @@
 package io.mywish.duc.blockchain.condition.helper;
 
-import io.mywish.event.model.ConnectionCrushEvent;
+import io.mywish.event.service.BaseEventCreator;
 import io.mywish.event.service.EventPublisher;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +12,10 @@ import java.util.Date;
 public class StatusCondition {
     private final long stopIncrementTime = 7200000;
     protected long startAttentionTime;
-    protected long attentionTimer;
+    protected long attentionTime;
     protected long crusTimer;
     protected long lastTimestamp;
+    private final BaseEventCreator eventCreator;
 
     @Getter
     protected int status;
@@ -28,9 +29,10 @@ public class StatusCondition {
     @Getter
     protected final String urisufix;
 
-    public StatusCondition(long attentionTime, EventPublisher eventPublisher, String network, String uriprefix, String urisufix) {
+    public StatusCondition(long attentionTime, EventPublisher eventPublisher, BaseEventCreator eventCreator, String network, String uriprefix, String urisufix) {
         this.eventPublisher = eventPublisher;
-        this.attentionTimer = startAttentionTime = attentionTime;
+        this.eventCreator = eventCreator;
+        this.attentionTime = startAttentionTime = attentionTime;
         this.lastTimestamp = new Date().getTime();
         this.network = network;
         this.uri = uriprefix.concat(urisufix);
@@ -47,7 +49,7 @@ public class StatusCondition {
             this.status = status;
             this.lastTimestamp = timestamp;
             log.info("{} status {} on {} time", this.network, status, new Date(timestamp));
-            attentionTimer = startAttentionTime;
+            attentionTime = startAttentionTime;
         } else if (status != 200) {
             crusTimer += (timestamp - lastTimestamp);
             lastTimestamp = timestamp;
@@ -57,19 +59,19 @@ public class StatusCondition {
     }
 
     private void checkTimeToNotify() {
-        if (crusTimer > attentionTimer) {
+        if (crusTimer > attentionTime) {
             upTimer();
             int stuckSeconds = Math.round(this.crusTimer / 1000);
             log.warn("Status 200 does not appear for {} seconds on {}", stuckSeconds, network);
-            eventPublisher.publish(new ConnectionCrushEvent(getNotifyMessage()));
+            eventPublisher.publish(eventCreator.createEvent(getNotifyMessage()));
         }
     }
 
     private void upTimer() {
-        if (attentionTimer < stopIncrementTime) {
-            attentionTimer *= 2;
-            if (attentionTimer > stopIncrementTime) {
-                attentionTimer = stopIncrementTime;
+        if (attentionTime < stopIncrementTime) {
+            attentionTime *= 2;
+            if (attentionTime > stopIncrementTime) {
+                attentionTime = stopIncrementTime;
             }
         }
     }
