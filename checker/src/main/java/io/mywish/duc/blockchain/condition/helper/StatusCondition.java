@@ -1,6 +1,6 @@
 package io.mywish.duc.blockchain.condition.helper;
 
-import io.mywish.event.model.ConnectionCrushEvent;
+import io.mywish.event.service.BaseEventCreator;
 import io.mywish.event.service.EventPublisher;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +15,7 @@ public class StatusCondition {
     protected long attentionTimer;
     protected long crusTimer;
     protected long lastTimestamp;
+    private final BaseEventCreator eventCreator;
 
     @Getter
     protected int status;
@@ -28,8 +29,9 @@ public class StatusCondition {
     @Getter
     protected final String urisufix;
 
-    public StatusCondition(long attentionTime, EventPublisher eventPublisher, String network, String uriprefix, String urisufix) {
+    public StatusCondition(long attentionTime, EventPublisher eventPublisher, BaseEventCreator eventCreator, String network, String uriprefix, String urisufix) {
         this.eventPublisher = eventPublisher;
+        this.eventCreator = eventCreator;
         this.attentionTimer = startAttentionTime = attentionTime;
         this.lastTimestamp = new Date().getTime();
         this.network = network;
@@ -61,7 +63,7 @@ public class StatusCondition {
             upTimer();
             int stuckSeconds = Math.round(this.crusTimer / 1000);
             log.warn("Status 200 does not appear for {} seconds on {}", stuckSeconds, network);
-            eventPublisher.publish(new ConnectionCrushEvent(getNotifyMessage()));
+            eventPublisher.publish(eventCreator.createEvent(getNotifyMessage()));
         }
     }
 
