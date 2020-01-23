@@ -15,7 +15,7 @@ public class BlockCondition {
     @Getter
     protected int lastBlock;
     protected long lastTimestamp;
-    protected long changeBlockTime;
+    protected long lastTimeNotify;
     protected EventPublisher eventPublisher;
     private final BaseEventCreator eventCreator;
     @Getter
@@ -32,22 +32,22 @@ public class BlockCondition {
     public void updateLastBlock(int lastBlock) {
         long timestamp = new Date().getTime();
         if (lastBlock > this.lastBlock) {
-            changeBlockTime = 0;
+            lastTimeNotify = 0;
             this.lastBlock = lastBlock;
             this.lastTimestamp = timestamp;
             log.info("New {} block {} save on {} time", network, lastBlock, new Date(timestamp));
             attentionTime = startAttentionTime;
         } else if (lastBlock == this.lastBlock) {
-            changeBlockTime += (timestamp - lastTimestamp);
+            lastTimeNotify += (timestamp - lastTimestamp);
             lastTimestamp = timestamp;
             checkTimeToNotify();
-            log.info("Already old {} block {} almost {} seconds", network, lastBlock, Math.round(this.changeBlockTime / 1000));
+            log.info("Already old {} block {} almost {} seconds", network, lastBlock, Math.round(this.lastTimeNotify / 1000));
         }
     }
 
     private void checkTimeToNotify() {
-        if (changeBlockTime > attentionTime) {
-            int stuckSeconds = Math.round(this.changeBlockTime / 1000);
+        if (lastTimeNotify > attentionTime) {
+            int stuckSeconds = Math.round(this.lastTimeNotify / 1000);
             log.warn("A new block {} does not appear for {} seconds", network, stuckSeconds);
             upTimer();
             String message = String.format("A new block {} does not appear for %d seconds", network, stuckSeconds);
@@ -56,6 +56,7 @@ public class BlockCondition {
     }
 
     private void upTimer() {
+        lastTimeNotify = 0;
         if (attentionTime < stopIncrementTime) {
             attentionTime *= 2;
             if (attentionTime > stopIncrementTime) {

@@ -13,7 +13,7 @@ public class StatusCondition {
     private final long stopIncrementTime = 7200000;
     protected long startAttentionTime;
     protected long attentionTime;
-    protected long crusTimer;
+    protected long lastTimeNotify;
     protected long lastTimestamp;
     private final BaseEventCreator eventCreator;
 
@@ -45,29 +45,30 @@ public class StatusCondition {
 
         long timestamp = new Date().getTime();
         if (status == 200) {
-            crusTimer = 0;
+            lastTimeNotify = 0;
             this.status = status;
             this.lastTimestamp = timestamp;
             log.info("{} status {} on {} time", this.network, status, new Date(timestamp));
             attentionTime = startAttentionTime;
         } else if (status != 200) {
-            crusTimer += (timestamp - lastTimestamp);
+            lastTimeNotify += (timestamp - lastTimestamp);
             lastTimestamp = timestamp;
             checkTimeToNotify();
-            log.info("Incorrect {} status {} almost {} seconds {}", network, status, Math.round(this.crusTimer / 1000), uri);
+            log.info("Incorrect {} status {} almost {} seconds {}", network, status, Math.round(this.lastTimeNotify / 1000), uri);
         }
     }
 
     private void checkTimeToNotify() {
-        if (crusTimer > attentionTime) {
+        if (lastTimeNotify > attentionTime) {
             upTimer();
-            int stuckSeconds = Math.round(this.crusTimer / 1000);
+            int stuckSeconds = Math.round(this.lastTimeNotify / 1000);
             log.warn("Status 200 does not appear for {} seconds on {}", stuckSeconds, network);
             eventPublisher.publish(eventCreator.createEvent(getNotifyMessage()));
         }
     }
 
     private void upTimer() {
+        lastTimeNotify = 0;
         if (attentionTime < stopIncrementTime) {
             attentionTime *= 2;
             if (attentionTime > stopIncrementTime) {
