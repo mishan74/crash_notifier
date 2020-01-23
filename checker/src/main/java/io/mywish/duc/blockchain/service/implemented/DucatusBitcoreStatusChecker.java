@@ -1,6 +1,6 @@
 package io.mywish.duc.blockchain.service.implemented;
 
-import io.mywish.duc.blockchain.condition.implementation.DucatusStatusCondition;
+import io.mywish.duc.blockchain.condition.implementation.DucatusBitcoreStatusCondition;
 import io.mywish.duc.blockchain.service.Checkable;
 import io.mywish.duc.blockchain.service.helper.StatusChecker;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -9,11 +9,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DucatusStatusChecker implements Checkable {
+public class DucatusBitcoreStatusChecker implements Checkable {
     private final StatusChecker statusChecker;
 
-    public DucatusStatusChecker(
-            @Autowired DucatusStatusCondition statusCondition,
+    public DucatusBitcoreStatusChecker(
+            @Autowired DucatusBitcoreStatusCondition statusCondition,
             @Autowired CloseableHttpClient closeableHttpClient) {
         this.statusChecker = new StatusChecker(statusCondition, closeableHttpClient);
     }

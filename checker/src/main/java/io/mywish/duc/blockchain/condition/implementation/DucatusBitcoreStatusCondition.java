@@ -2,24 +2,26 @@ package io.mywish.duc.blockchain.condition.implementation;
 
 import io.mywish.duc.blockchain.condition.StatusConditional;
 import io.mywish.duc.blockchain.condition.helper.StatusCondition;
-import io.mywish.event.service.DevConnectionCrushEventCreator;
+import io.mywish.event.service.ConnectionCrushEventCreator;
 import io.mywish.event.service.EventPublisher;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DucatusXStatusCondition implements StatusConditional {
+@Slf4j
+public class DucatusBitcoreStatusCondition implements StatusConditional {
     private final StatusCondition condition;
 
-    public DucatusXStatusCondition(
-            @Value("${io.mywish.ducX.blockchain.attention.status.time}") long attentionTime,
+    public DucatusBitcoreStatusCondition(
+            @Value("${io.mywish.duc.blockchain.attention.status.time}") long attentionTime,
             EventPublisher eventPublisher,
-            @Autowired DevConnectionCrushEventCreator eventCreator,
-            @Value("${io.mywish.ducX.blockchain.uri}") String uri,
-            @Value("${io.mywish.ducX.blockchain.uri.sufix}") String suffix,
-            @Value("${io.mywish.ducX.blockchain.uri.alias}") String alias) {
-        this.condition = new StatusCondition(attentionTime, eventPublisher, eventCreator, "DucatusX", uri, suffix, alias);
+            @Autowired ConnectionCrushEventCreator eventCreator,
+            @Value("${io.mywish.duc.blockchain.uri}") String uri,
+            @Value("${io.mywish.duc.blockchain.uri.sufix}") String suffix,
+            @Value("${io.mywish.duc.blockchain.uri.alias}") String alias) {
+        this.condition = new StatusCondition(attentionTime, eventPublisher, eventCreator, "Ducatus", uri, suffix, alias);
     }
 
     @Override
