@@ -11,16 +11,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class DucatusStatusCondition implements StatusConditional {
+public class DucatusBitcoreStatusCondition implements StatusConditional {
     private final StatusCondition condition;
 
-    public DucatusStatusCondition(
+    public DucatusBitcoreStatusCondition(
             @Value("${io.mywish.duc.blockchain.attention.status.time}") long attentionTime,
             EventPublisher eventPublisher,
             @Autowired ConnectionCrushEventCreator eventCreator,
             @Value("${io.mywish.duc.blockchain.uri}") String uri,
-            @Value("${io.mywish.duc.blockchain.uri.sufix}") String suffix) {
-        this.condition = new StatusCondition(attentionTime, eventPublisher, eventCreator, "Ducatus", uri, suffix);
+            @Value("${io.mywish.duc.blockchain.uri.sufix}") String suffix,
+            @Value("${io.mywish.duc.blockchain.uri.alias}") String alias) {
+        this.condition = new StatusCondition(attentionTime, eventPublisher, eventCreator, "Ducatus", uri, suffix, alias);
     }
 
     @Override

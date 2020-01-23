@@ -17,8 +17,9 @@ public class DucatusXStatusCondition implements StatusConditional {
             EventPublisher eventPublisher,
             @Autowired DevConnectionCrushEventCreator eventCreator,
             @Value("${io.mywish.ducX.blockchain.uri}") String uri,
-            @Value("${io.mywish.ducX.blockchain.uri.sufix}") String suffix) {
-        this.condition = new StatusCondition(attentionTime, eventPublisher, eventCreator, "DucatusX", uri, suffix);
+            @Value("${io.mywish.ducX.blockchain.uri.sufix}") String suffix,
+            @Value("${io.mywish.ducX.blockchain.uri.alias}") String alias) {
+        this.condition = new StatusCondition(attentionTime, eventPublisher, eventCreator, "DucatusX", uri, suffix, alias);
     }
 
     @Override
