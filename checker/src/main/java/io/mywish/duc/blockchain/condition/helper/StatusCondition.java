@@ -79,7 +79,7 @@ public class StatusCondition {
 
     private String getNotifyMessage() {
         StringBuilder message = new StringBuilder();
-        message.append(String.format("\"Can't connect to %s by url:.", allias, uri));
+        message.append(String.format("\"Can't connect to %s by url:%s.", allias, uri));
         if (status != -1) {
             message.append(String.format(" Code status %d", status));
         }
